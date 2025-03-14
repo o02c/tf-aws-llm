@@ -1,0 +1,26 @@
+locals {
+  aws_organizations_organization_account = {
+    core_account = {
+      sandbox = "sample@gmail.com"
+    }
+  }
+}
+
+resource "aws_organizations_organization" "this" {
+  aws_service_access_principals = ["sso.amazonaws.com"]
+  enabled_policy_types          = ["AISERVICES_OPT_OUT_POLICY", "BACKUP_POLICY"]
+  feature_set                   = "ALL"
+}
+
+resource "aws_organizations_organizational_unit" "this" {
+  name      = "Core"
+  parent_id = aws_organizations_organization.this.id
+}
+
+resource "aws_organizations_account" "this" {
+  for_each = local.aws_organizations_organization_account.core_account
+
+  name      = each.key
+  email     = each.value
+  parent_id = aws_organizations_organizational_unit.this.id
+}

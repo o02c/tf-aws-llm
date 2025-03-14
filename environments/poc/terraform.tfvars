@@ -1,0 +1,12 @@
+region               = "ap-northeast-1"
+vpc_cidr_block       = "10.0.0.0/16"
+public_subnet_cidr   = "10.0.1.0/24"
+private_subnet_cidrs = ["10.0.2.0/24", "10.0.3.0/24"]
+availability_zones   = ["ap-northeast-1a", "ap-northeast-1c"]
+instance_type        = "t2.micro"
+ami_id               = "ami-0599b6e53ca798bb2" # Amazon Linux 2023 in ap-northeast-1
+db_instance_class    = "db.t3.micro"
+db_name              = "mydb"
+db_username          = "admin"
+# db_password      = "YOUR_PASSWORD_HERE"  # Uncomment and set this value or provide it via command line
+enable_rds = false # RDSを無効化（必要な場合はtrueに設定）
