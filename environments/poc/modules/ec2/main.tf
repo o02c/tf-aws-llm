@@ -1,6 +1,6 @@
-# IAM role for SSM access and Bedrock
-resource "aws_iam_role" "ssm_role" {
-  name = "${var.system_name}-${var.environment}-ssm-role"
+# IAM role for EC2 instance (Bedrock access, S3 access, etc.)
+resource "aws_iam_role" "ec2_instance_role" {
+  name = "${var.system_name}-${var.environment}-ec2-instance-role"
   
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -16,7 +16,7 @@ resource "aws_iam_role" "ssm_role" {
   })
 
   tags = {
-    Name = "${var.system_name}-${var.environment}-ssm-role"
+    Name = "${var.system_name}-${var.environment}-ec2-instance-role"
   }
 }
 
@@ -58,20 +58,20 @@ resource "aws_iam_policy" "bedrock_policy" {
 
 # Attach the AmazonSSMManagedInstanceCore policy to the role
 resource "aws_iam_role_policy_attachment" "ssm_policy" {
-  role       = aws_iam_role.ssm_role.name
+  role       = aws_iam_role.ec2_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 # Attach the Bedrock policy to the role
 resource "aws_iam_role_policy_attachment" "bedrock_policy_attachment" {
-  role       = aws_iam_role.ssm_role.name
+  role       = aws_iam_role.ec2_instance_role.name
   policy_arn = aws_iam_policy.bedrock_policy.arn
 }
 
 # Create an instance profile
-resource "aws_iam_instance_profile" "ssm_instance_profile" {
-  name = "${var.system_name}-${var.environment}-ssm-instance-profile"
-  role = aws_iam_role.ssm_role.name
+resource "aws_iam_instance_profile" "ec2_instance_profile" {
+  name = "${var.system_name}-${var.environment}-ec2-instance-profile"
+  role = aws_iam_role.ec2_instance_role.name
 }
 
 resource "aws_instance" "main" {
@@ -80,8 +80,10 @@ resource "aws_instance" "main" {
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [var.security_group_id]
   key_name               = var.key_name
-  iam_instance_profile   = aws_iam_instance_profile.ssm_instance_profile.name
-  user_data              = file("${path.module}/user_data.sh")
+  iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
+  user_data              = templatefile("${path.module}/scripts/user_data.sh.tpl", {
+    s3_bucket_name = aws_s3_bucket.scripts.id
+  })
 
   tags = {
     Name = "${var.system_name}-${var.environment}-instance"
@@ -91,6 +93,23 @@ resource "aws_instance" "main" {
     volume_size = 20
     volume_type = "gp3"
   }
+}
+
+# Elastic IP (optional)
+resource "aws_eip" "instance" {
+  count = var.enable_elastic_ip ? 1 : 0
+  domain = "vpc"
+  
+  tags = {
+    Name = "${var.system_name}-${var.environment}-eip"
+  }
+}
+
+# Elastic IP association (optional)
+resource "aws_eip_association" "instance" {
+  count = var.enable_elastic_ip ? 1 : 0
+  instance_id   = aws_instance.main.id
+  allocation_id = aws_eip.instance[0].id
 }
 
 # IAM role for EventBridge Scheduler to stop EC2 instances

@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket       = "mgt-tfstate-654654512164"
-    key          = "tf-aws-llm/poc/terraform.tfstate"
+    key          = "tf-aws-llm/terraform.tfstate"
     region       = "ap-northeast-1"
     use_lockfile = true
   }
@@ -43,6 +43,7 @@ module "ec2" {
   environment               = var.environment
   auto_stop_cron_expression = var.ec2_auto_stop_cron_expression
   auto_stop_enabled         = var.ec2_auto_stop_enabled
+  enable_elastic_ip         = var.ec2_enable_elastic_ip
 }
 
 module "rds" {

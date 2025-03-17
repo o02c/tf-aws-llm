@@ -99,3 +99,9 @@ variable "ec2_auto_stop_enabled" {
   type        = bool
   default     = true
 }
+
+variable "ec2_enable_elastic_ip" {
+  description = "Whether to assign an Elastic IP to the EC2 instance"
+  type        = bool
+  default     = false
+}

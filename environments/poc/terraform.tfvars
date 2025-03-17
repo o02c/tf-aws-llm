@@ -8,5 +8,5 @@ ami_id               = "ami-0599b6e53ca798bb2" # Amazon Linux 2023 in ap-northea
 db_instance_class    = "db.t3.micro"
 db_name              = "mydb"
 db_username          = "admin"
-# db_password      = "YOUR_PASSWORD_HERE"  # Uncomment and set this value or provide it via command line
+db_password          = "YOUR_PASSWORD_HERE"  # Uncomment and set this value or provide it via command line
 enable_rds = false # RDSを無効化（必要な場合はtrueに設定）
