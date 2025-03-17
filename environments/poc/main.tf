@@ -60,6 +60,20 @@ module "rds" {
   db_subnet_group_name = module.vpc.db_subnet_group_name
   system_name          = var.system_name
   environment          = var.environment
+  
+  # DNS関連の設定
+  create_dns_record    = var.enable_dns
+  dns_zone_id          = var.enable_dns ? module.dns.zone_id : ""
+  dns_domain_name      = var.enable_dns ? module.dns.domain_name : ""
+}
+
+module "dns" {
+  source = "./modules/dns"
+
+  system_name  = var.system_name
+  environment  = var.environment
+  domain_name  = var.dns_domain_name
+  vpc_id       = module.vpc.vpc_id
 }
 
 module "bedrock" {

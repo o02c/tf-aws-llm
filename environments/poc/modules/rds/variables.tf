@@ -47,3 +47,51 @@ variable "environment" {
   description = "Deployment environment"
   type        = string
 }
+
+variable "allocated_storage" {
+  description = "Allocated storage for the RDS instance in GB"
+  type        = number
+  default     = 20
+}
+
+variable "max_allocated_storage" {
+  description = "Maximum allocated storage for the RDS instance in GB for autoscaling"
+  type        = number
+  default     = 100
+}
+
+variable "backup_retention_period" {
+  description = "Number of days to retain backups"
+  type        = number
+  default     = 7
+}
+
+variable "backup_window" {
+  description = "Daily time range during which backups happen"
+  type        = string
+  default     = "03:00-04:00"
+}
+
+variable "maintenance_window" {
+  description = "Weekly time range during which system maintenance can occur"
+  type        = string
+  default     = "Mon:04:00-Mon:05:00"
+}
+
+variable "dns_zone_id" {
+  description = "Route 53 private zone ID for DNS record creation"
+  type        = string
+  default     = ""
+}
+
+variable "dns_domain_name" {
+  description = "Domain name for the DNS record"
+  type        = string
+  default     = ""
+}
+
+variable "create_dns_record" {
+  description = "Whether to create a DNS record for the RDS instance"
+  type        = bool
+  default     = false
+}

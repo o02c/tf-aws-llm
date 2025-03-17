@@ -49,19 +49,19 @@ variable "key_name" {
 variable "db_instance_class" {
   description = "RDS instance class"
   type        = string
-  default     = "db.t3.micro"
+  default     = "db.t3.medium" # Upgraded to medium for better vector processing performance
 }
 
 variable "db_name" {
   description = "Database name"
   type        = string
-  default     = "mydb"
+  default     = "vectordb"
 }
 
 variable "db_username" {
   description = "Database username"
   type        = string
-  default     = "admin"
+  default     = "postgres"
 }
 
 variable "db_password" {
@@ -70,10 +70,40 @@ variable "db_password" {
   sensitive   = true
 }
 
+variable "db_allocated_storage" {
+  description = "Allocated storage for the RDS instance in GB"
+  type        = number
+  default     = 20
+}
+
+variable "db_max_allocated_storage" {
+  description = "Maximum allocated storage for the RDS instance in GB for autoscaling"
+  type        = number
+  default     = 100
+}
+
+variable "db_backup_retention_period" {
+  description = "Number of days to retain backups"
+  type        = number
+  default     = 7
+}
+
+variable "db_backup_window" {
+  description = "Daily time range during which backups happen"
+  type        = string
+  default     = "03:00-04:00"
+}
+
+variable "db_maintenance_window" {
+  description = "Weekly time range during which system maintenance can occur"
+  type        = string
+  default     = "Mon:04:00-Mon:05:00"
+}
+
 variable "enable_rds" {
   description = "Flag to enable or disable RDS deployment"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "system_name" {
@@ -104,4 +134,16 @@ variable "ec2_enable_elastic_ip" {
   description = "Whether to assign an Elastic IP to the EC2 instance"
   type        = bool
   default     = false
+}
+
+variable "dns_domain_name" {
+  description = "Base domain name for DNS records"
+  type        = string
+  default     = "internal"
+}
+
+variable "enable_dns" {
+  description = "Whether to enable DNS name resolution"
+  type        = bool
+  default     = true
 }

@@ -129,11 +129,11 @@ resource "aws_security_group" "rds" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port       = 3306
-    to_port         = 3306
+    from_port       = 5432
+    to_port         = 5432
     protocol        = "tcp"
     security_groups = [aws_security_group.ec2.id]
-    description     = "MySQL access from EC2 instances"
+    description     = "PostgreSQL access from EC2 instances"
   }
 
   egress {
